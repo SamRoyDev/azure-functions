@@ -22,3 +22,11 @@ functions:
           methods:
             - get
             - post
+  GetUserMailboxPYPS:
+    handler: GetUserMailboxPYPS/init
+    events:
+      - http: true
+        x-azure-settings:
+          authLevel: anonymous
+          methods:
+            - get
