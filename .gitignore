@@ -6,3 +6,5 @@ __pycache__/
 
 .env
 local.settings.json
+.python_packages
+.venv
