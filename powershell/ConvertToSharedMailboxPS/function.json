@@ -1,0 +1,18 @@
+{
+  "scriptFile": "convertUserToSharedMailbox.ps1",
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["get","post"],
+      "route": "ConvertToSharedMailboxPS"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
+}
