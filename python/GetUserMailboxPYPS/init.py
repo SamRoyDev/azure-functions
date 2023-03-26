@@ -1,5 +1,4 @@
 import logging
-import subprocess
 import azure.functions as func
 import os
 import windows_tools.powershell
