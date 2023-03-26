@@ -1,0 +1,20 @@
+service: powershell-function-app
+
+provider:
+  name: azure
+  runtime: powershell
+  location: ${AZURE_REGION}
+
+plugins:
+  - serverless-azure-functions
+
+functions:
+  ConvertToSharedMailboxPS:
+    handler: ./ConvertToSharedMailboxPS/convertUserToSharedMailbox.ps1
+    events:
+      - http: true
+        x-azure-settings:
+          authLevel: anonymous
+          methods:
+            - get
+            - post

@@ -1,0 +1,24 @@
+service: python-function-app
+
+custom:
+  dotenv:
+    path: ../
+
+provider:
+  name: azure
+  runtime: python3.8
+  location: ${AZURE_REGION}
+
+plugins:
+  - serverless-azure-functions
+
+functions:
+  HttpTriggerFunction:
+    handler: HttpTriggerFunction/start
+    events:
+      - http: true
+        x-azure-settings:
+          authLevel: anonymous
+          methods:
+            - get
+            - post
