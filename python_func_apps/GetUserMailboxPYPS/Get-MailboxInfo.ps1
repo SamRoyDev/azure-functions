@@ -2,20 +2,6 @@ param(
     [string]$EmailAddress
 )
 
-# Set your application credentials here
-# 
-# $TenantId = $env:TenantId
-# $ClientSecret = $env:ClientSecret
-
-# $ExchangeModuleUrl = "https://outlook.office365.com/PowerShell-LiveID?BasicAuthToOAuthConversion=true"
-# $Credential = New-Object PSCredential($AppId, (ConvertTo-SecureString $ClientSecret -AsPlainText -Force))
-# $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ExchangeModuleUrl -Credential $Credential -Authentication OAuth -AllowRedirection -ErrorAction Stop
-
-# Import-PSSession $Session -DisableNameChecking
-# Connect-ExchangeOnline -AppId $AppId -CertificateFilePath $ClientSecret -TenantId $TenantId
-
-# Set your PowerShell credentials for Exchange Online
-
 $TenantId = $env:TENANT_ID
 $AppId = $env:APP_ID
 $CertBase64 = $env:CERT_BASE64
