@@ -7,15 +7,6 @@ import windows_tools.powershell
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    tenant_id = os.environ.get('TENANT_ID')
-    app_id = os.environ.get('APP_ID')
-    cert_base64 = os.environ.get('CERT_BASE64')
-
-    # Print the environment variables for debugging
-    print(f"TenantId: {tenant_id}")
-    print(f"AppId: {app_id}")
-    print(f"CertBase64: {cert_base64}")
-
     email = req.params.get('email')
     if not email:
         try:
