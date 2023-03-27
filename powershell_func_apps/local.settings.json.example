@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "powershell",
+    "FUNCTIONS_WORKER_RUNTIME_VERSION": "7.2",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AZURE_APP_ID": "example_azure_app_registration_id",
+    "AZURE_TENANT_ID": "example_azure_tenant_id",
+    "AZURE_ORG": "example_tenant.onmicrosoft.com",
+    "CERT_PASSWORD": "example_password_string",
+    "CERT_BASE64": "example_base64_pfx_cert_string"
+    }
+}

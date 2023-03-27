@@ -7,11 +7,6 @@ $AppId = $env:APP_ID
 $CertBase64 = $env:CERT_BASE64
 $CertPassword = ConvertTo-SecureString -String $env:CERT_PASSWORD -Force -AsPlainText
 
-Write-Host "TenantId: $TenantId"
-Write-Host "AppId: $AppId"
-Write-Host "CertBase64: $CertBase64"
-Write-Host "Cert passwords: $env:CERT_PASSWORD --- $CertPassword"
-
 try {
     # Convert the Base64 string to a byte array
     $certBytes = [Convert]::FromBase64String($CertBase64)
