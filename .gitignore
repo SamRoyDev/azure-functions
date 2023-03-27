@@ -27,6 +27,7 @@ node_modules
 dist
 
 .circleci/*
+.vscode
 
 # Local python packages
 .python_packages/
