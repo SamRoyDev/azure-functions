@@ -1,7 +1,8 @@
 # Set certificate parameters
 $certName = "AzureFunctions2023"
 $certSubject = "CN=AzureFunctions2023"
-$certPassword = ConvertTo-SecureString -String "cortica" -Force -AsPlainText
+$certPassword = $env:CERT_PASSWORD
+$certPassword = ConvertTo-SecureString -String $certPassword -Force -AsPlainText
 $certStartDate = Get-Date
 $certEndDate = $certStartDate.AddYears(1)
 
