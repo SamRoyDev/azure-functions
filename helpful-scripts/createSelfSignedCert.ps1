@@ -2,7 +2,7 @@
 $certName = "AzureFunctions2023"
 $certSubject = "CN=AzureFunctions2023"
 $certPassword = $env:CERT_PASSWORD
-$certPassword = ConvertTo-SecureString -String $certPassword -Force -AsPlainText
+$certSecurePassword = ConvertTo-SecureString -String $certPassword -Force -AsPlainText
 $certStartDate = Get-Date
 $certEndDate = $certStartDate.AddYears(1)
 
@@ -13,5 +13,5 @@ $NewCert = New-SelfSignedCertificate -DnsName $certSubject -CertStoreLocation "c
 $PFXFilePath = Join-Path -Path $env:USERPROFILE -ChildPath "$certName.pfx"
 $CERFilePath = Join-Path -Path $env:USERPROFILE -ChildPath "$certName.cer"
 $CertThumbprint = $NewCert.Thumbprint
-Export-PfxCertificate -Cert "cert:\LocalMachine\My\$CertThumbprint" -FilePath $PFXFilePath -Password $certPassword
+Export-PfxCertificate -Cert "cert:\LocalMachine\My\$CertThumbprint" -FilePath $PFXFilePath -Password $certSecurePassword
 Export-Certificate -Cert "cert:\LocalMachine\My\$CertThumbprint" -FilePath $CERFilePath
