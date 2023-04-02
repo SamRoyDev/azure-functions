@@ -3,9 +3,9 @@
 az login
 
 # Variables
-ResourceGroup="MyResourceGroup"
-Location="EastUS"
-StorageAccount="mystorageaccount"
+ResourceGroup="itops-azure-functions"
+Location="WestUS"
+StorageAccount="itopsazurefunctions"
 
 # Create a new Resource Group
 az group create --name $ResourceGroup --location $Location
@@ -14,7 +14,7 @@ az group create --name $ResourceGroup --location $Location
 az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS --kind StorageV2
 
 # Variables
-FunctionAppName="GetMailboxFunctionApp"
+FunctionAppName="powershell_func_app"
 
 # Create a new Function App
 az functionapp create --name $FunctionAppName --storage-account $StorageAccount --resource-group $ResourceGroup --consumption-plan-location $Location --runtime powershell --functions-version 3
