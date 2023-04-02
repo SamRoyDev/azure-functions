@@ -1,6 +1,9 @@
 using namespace System.Net
 using namespace System.Web
 
+# Need to import helper functions
+. "helpers/Authorization.ps1"
+
 param($req, $TriggerMetadata)
 
 $ErrorActionPreference = 'Stop'
@@ -22,7 +25,8 @@ try {
     Connect-ExchangeOnline -Credential $credential -ErrorAction Stop
 
     # Convert user mailbox to shared mailbox
-    Set-Mailbox -Identity $userId -Type Shared -ErrorAction Stop
+    #Set-Mailbox -Identity $userId -Type Shared -ErrorAction Stop
+    Get-Mailbox -Identity $userId
 
     # Disconnect from Exchange Online
     Disconnect-ExchangeOnline -Confirm:$false -ErrorAction Stop
