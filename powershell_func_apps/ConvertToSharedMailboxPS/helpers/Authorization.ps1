@@ -1,13 +1,10 @@
 using namespace System.IdentityModel.Tokens.Jwt
-using namespace Microsoft.IdentityModel.Tokens
 
 # Validate AAD token and get user's claims
 function isValidToken {
     param(
         [string]$AuthorizationHeader
     )
-
-    Add-Type -AssemblyName System.IdentityModel.Tokens.Jwt
 
     $clientSecret = $env:APP_REGISTRATION_SECRET
     $tenantId = $env:AZURE_TENANT_ID

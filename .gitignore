@@ -28,6 +28,7 @@ dist
 
 .circleci/*
 *.fsproj
+packages*
 
 # Local python packages
 .python_packages/
