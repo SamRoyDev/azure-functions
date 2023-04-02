@@ -2,17 +2,29 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
-# Need to import helper functions
-. (Join-Path $PSScriptRoot "helpers/Authorization.ps1")
+# Import functions
 . (Join-Path $PSScriptRoot "ConvertToSharedMailbox.ps1")
 
-# Load request body
-$requestBody = Get-Content $Request -Raw | ConvertFrom-Json 
+$email = $Request.Query.Identity
+
+if (-not $email) {
+    $email = $Request.Body.Identity
+}
+
+if (-not $email) {
+    $body = @{
+        status  = "error"
+        message = "Please provide a valid Identity."
+    } | ConvertTo-Json
+
+    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::BadRequest
+        Body = $body
+    })
+}
 
 try {
-    $result = isValidToken -AuthorizationHeader $Request.Headers.Authorization
-
-    #$result = ConvertToSharedMailbox -parameter $requestBody.userId
+    $result = ConvertToSharedMailbox -Identity $email
 
     $response = @{
         StatusCode = [HttpStatusCode]::OK
@@ -23,8 +35,8 @@ try {
 
 } catch {
     $response = @{
-        StatusCode = [HttpStatusCode]::Unauthorized
-        Body = "Unauthorized access: $_"
+        StatusCode = [HttpStatusCode]::InternalServerError
+        Body = "Error: $_"
     }
     
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]$response)

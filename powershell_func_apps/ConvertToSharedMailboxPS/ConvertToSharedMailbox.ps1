@@ -1,51 +1,50 @@
 using namespace System.Net
 using namespace System.Web
 
-
-# param($req, $TriggerMetadata)
-
-# $ErrorActionPreference = 'Stop'
-
-# # Load request body
-# $requestBody = Get-Content $req -Raw | ConvertFrom-Json
-# $userId = $requestBody.userId
-
-
-function ConvertToSharedMailbox([string]$userId) {
-    # Set your PowerShell credentials for Exchange Online
-    $Username = $env:EXCHANGE_USERNAME
-    $Password = $env:EXCHANGE_PASSWORD | ConvertTo-SecureString -AsPlainText -Force
-    $credential = New-Object System.Management.Automation.PSCredential($Username, $Password)
+# import helper functions
+. (Join-Path $PSScriptRoot "../helpers/CertificateAuthentication.ps1")
+function ConvertToSharedMailbox {
+    param (
+        [Parameter(Mandatory = $true)][string]$Identity
+    )
 
     try {
-        # Import Exchange Online Management module
-        Import-Module ExchangeOnlineManagement -ErrorAction Stop
+        # Generate certificate using helper function
+        $SecureCertPassword = $env:CERT_PASSWORD | ConvertTo-SecureString -AsPlainText -Force
+        $Certificate = GetExchangeAuthCertificate -CertBase64 $env:CERT_BASE64 -CertPassword $SecureCertPassword
 
+        # Check if the ExchangeOnlineManagement module is already imported
+        if (-not (Get-Module -Name ExchangeOnlineManagement)) {
+            # If the module is not imported, import it
+            Import-Module ExchangeOnlineManagement -ErrorAction Stop
+        }
+        
         # Connect to Exchange Online
-        Connect-ExchangeOnline -Credential $credential -ErrorAction Stop
+        Connect-ExchangeOnline -Certificate $Certificate -AppId $env:AZURE_APP_ID -Organization $env:AZURE_ORG
 
         # Convert user mailbox to shared mailbox
         #Set-Mailbox -Identity $userId -Type Shared -ErrorAction Stop
-        $result = Get-Mailbox -Identity $userId
+        $result = Get-Mailbox -Identity $Identity
 
         # Disconnect from Exchange Online
         Disconnect-ExchangeOnline -Confirm:$false -ErrorAction Stop
 
-        # Return success response
-        # $response = @{
-        #     StatusCode = 200
-        #     Body = "User account successfully converted to shared mailbox."
-        # }
+        if ($result) {
+            $body = @{
+                status = "success"
+                result = $result
+            } | ConvertTo-Json
+        }
+        else {
+            $body = @{
+                status  = "error"
+                message = "[ConvertToSharedMailbox] Error: No response"
+            } | ConvertTo-Json
+        }
 
-        return $result
-    } catch {
-        # Return error response
-        # $response = @{
-        #     StatusCode = 500
-        #     Body = "An error occurred: $($_.Exception.Message)"
-        # }
-        return _$
+        return $body
     }
-
-    #Push-OutputBinding -Name res -Value ([HttpResponseContext]$response)
+    catch {
+        return "[ConvertToSharedMailbox] Error: $_"
+    }
 }

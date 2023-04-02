@@ -2,12 +2,15 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
-Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-    StatusCode = [HttpStatusCode]::BadRequest
-    Body = "testing"
-})
+# import helper functions
+. (Join-Path $PSScriptRoot "../helpers/CertificateAuthentication.ps1")
 
-return 1
+# Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+#     StatusCode = [HttpStatusCode]::BadRequest
+#     Body = "testing"
+# })
+
+# return 1
 
 $email = $Request.Query.email
 
@@ -27,36 +30,17 @@ if (-not $email) {
     })
 }
 
-$TenantId = $env:AZURE_ORG
-$AppId = $env:AZURE_APP_ID
-$CertBase64 = $env:CERT_BASE64
-$CertPassword = ConvertTo-SecureString -String $env:CERT_PASSWORD -Force -AsPlainText
-
 try {
-    # Convert the Base64 string to a byte array
-    $certBytes = [Convert]::FromBase64String($CertBase64)
-    $cert = New-Object -TypeName System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList @($certBytes,$CertPassword)
-    $cert
-}
-catch {
-    $body = @{
-        status  = "error"
-        message = "Error: Could not create X509 certificate. Details: $_"
-    } | ConvertTo-Json
+    # Generate certificate using helper function
+    $SecureCertPassword = $env:CERT_PASSWORD | ConvertTo-SecureString -AsPlainText -Force
+    $Certificate = GetExchangeAuthCertificate -CertBase64 $env:CERT_BASE64 -CertPassword $SecureCertPassword
 
-    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-        StatusCode = [HttpStatusCode]::BadRequest
-        Body = $body
-    })
-}
-
-try {
     # Load Exchange Online Management module
     Import-Module ExchangeOnlineManagement
     Get-Module ExchangeOnlineManagement
 
     # Connect to Exchange Online
-    Connect-ExchangeOnline -Certificate $cert -AppId $AppId -Organization $TenantId -ShowBanner:$false
+    Connect-ExchangeOnline -Certificate $Certificate -AppId $env:AZURE_APP_ID -Organization $env:AZURE_ORG
 }
 catch {
     $body = @{
