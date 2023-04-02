@@ -3,9 +3,9 @@
 az login
 
 # Variables
-ResourceGroup="itops-azure-functions"
+ResourceGroup="ExampleResourceGroup"
 Location="WestUS"
-StorageAccount="itopsazurefunctions"
+StorageAccount="ExampleStorageAccount"
 
 # Create a new Resource Group
 az group create --name $ResourceGroup --location $Location
@@ -14,19 +14,23 @@ az group create --name $ResourceGroup --location $Location
 az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS --kind StorageV2
 
 # Variables
-FunctionAppName="powershell_func_app"
+FunctionAppName="Example"
 
 # Create a new Function App
-az functionapp create --name $FunctionAppName --storage-account $StorageAccount --resource-group $ResourceGroup --consumption-plan-location $Location --runtime powershell --functions-version 3
-
-# Deploy your function from your Git repo
-az functionapp deployment source config --name $FunctionAppName --resource-group $ResourceGroup --repo-url <your_git_repo_url> --branch master --manual-integration
+az functionapp create --name $FunctionAppName --storage-account $StorageAccount --resource-group $ResourceGroup --consumption-plan-location $Location --runtime powershell --functions-version 4 --runtime-version 7.2
 
 # Securing the App
 
 ### Update the Function App's auth settings
-az webapp auth update --ids $(az functionapp show --name $FunctionAppName --resource-group $ResourceGroup --query id --output tsv) --enabled true --action LoginWithAzureActiveDirectory --aad-allowed-token-audiences <your_client_id>
+az webapp auth update --ids $(az functionapp show --name $FunctionAppName --resource-group $ResourceGroup --query id --output tsv) --enabled true --action LoginWithAzureActiveDirectory --aad-allowed-token-audiences $AppId
 
+# Deploy your function from your Git repo
+az functionapp deployment source config --name $FunctionAppName --resource-group $ResourceGroup --repo-url <your_git_repo_url> --branch master --manual-integration
+
+# Deploy using zip file powershell
+Compress-Archive -Path .\$FunctionAppDirectory\* -DestinationPath .\$FunctionAppName.zip
+
+az functionapp deployment source config-zip --resource-group $ResourceGroup --name "$FunctionAppName" --src .\$FunctionAppName.zip
 
 # Example config.yml that could deploy this:
 
