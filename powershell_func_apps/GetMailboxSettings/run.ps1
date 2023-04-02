@@ -2,6 +2,13 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
+Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+    StatusCode = [HttpStatusCode]::BadRequest
+    Body = "testing"
+})
+
+return 1
+
 $email = $Request.Query.email
 
 if (-not $email) {

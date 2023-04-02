@@ -1,23 +1,39 @@
-using namespace System.Security.Claims
+using namespace System.IdentityModel.Tokens.Jwt
+using namespace Microsoft.IdentityModel.Tokens
 
 # Validate AAD token and get user's claims
-function Get-UserClaims {
+function isValidToken {
     param(
         [string]$AuthorizationHeader
     )
+
+    $clientSecret = $env:APP_REGISTRATION_SECRET
+    $tenantId = $env:AZURE_TENANT_ID
 
     if (-not $AuthorizationHeader.StartsWith("Bearer ")) {
         throw "Missing or invalid Authorization header"
     }
 
-    $accessToken = $AuthorizationHeader.Substring(7)
-    $validationParameters = New-Object Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    $validationParameters.ValidateIssuer = $true
-    $validationParameters.ValidAudience = $env:APP_REGISTRATION_CLIENT_ID
-    $validationParameters.IssuerSigningKey = $env:APP_REGISTRATION_SIGNING_KEY
+    $extractedToken = $AuthorizationHeader.Substring("Bearer ".Length)
 
-    $jwtHandler = New-Object Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler
-    $validatedToken = $jwtHandler.ValidateToken($accessToken, $validationParameters)
+    try {
+        $openIdConfigUrl = "https://login.microsoftonline.com/$tenantId/v2.0/.well-known/openid-configuration"
+        $openIdConfig = Invoke-RestMethod -Uri $openIdConfigUrl
 
-    return $validatedToken.Claims
+        $tokenValidationParameters = @{
+            ValidateAudience   = $false
+            ValidateIssuer     = $true
+            ValidIssuer        = $openIdConfig.issuer
+            IssuerSigningKey   = [Microsoft.IdentityModel.Tokens.JsonWebKey]::CreateFromSecret($clientSecret)
+            ValidateLifetime   = $true
+        }
+
+        $jwtHandler = New-Object JwtSecurityTokenHandler
+        $jwtHandler.ValidateToken($extractedToken, $tokenValidationParameters, [ref]$null)
+
+        return $true
+    }
+    catch {
+        return $_.Exception.Message
+    }
 }

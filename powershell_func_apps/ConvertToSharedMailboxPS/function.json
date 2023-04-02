@@ -1,18 +1,19 @@
 {
-  "scriptFile": "run.ps1",
   "bindings": [
     {
       "authLevel": "function",
       "type": "httpTrigger",
       "direction": "in",
-      "name": "req",
-      "methods": ["get","post"],
-      "route": "ConvertToSharedMailboxPS"
+      "name": "Request",
+      "methods": [
+        "get",
+        "post"
+      ]
     },
     {
       "type": "http",
       "direction": "out",
-      "name": "res"
+      "name": "Response"
     }
   ]
 }
