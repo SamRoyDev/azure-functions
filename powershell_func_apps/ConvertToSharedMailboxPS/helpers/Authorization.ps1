@@ -7,6 +7,8 @@ function isValidToken {
         [string]$AuthorizationHeader
     )
 
+    Add-Type -AssemblyName System.IdentityModel.Tokens.Jwt
+
     $clientSecret = $env:APP_REGISTRATION_SECRET
     $tenantId = $env:AZURE_TENANT_ID
 
