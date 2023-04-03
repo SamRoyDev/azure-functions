@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Create the resource group
           command: |
-            az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+            az login --service-principal --username $FUNCTION_APP_CLIENT_ID --password $FUNCTION_APP_CLIENT_SECRET --tenant $FUNCTION_APP_TENANT_ID
             az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_GROUP_LOCATION
       - run:
           name: Create the storage account
