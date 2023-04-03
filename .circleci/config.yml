@@ -97,4 +97,4 @@ workflows:
       #         only: /^python_func_apps/.*
       - deploy_powershell_func_app:
           filters:
-              only: /^powershell_func_apps/.*
+              paths: powershell_func_app/*
