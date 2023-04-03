@@ -2,9 +2,11 @@ version: 2.1
 
 # https://circleci.com/developer/orbs/orb/circleci/azure-cli
 # https://circleci.com/developer/orbs/orb/circleci/node
+# https://circleci.com/developer/orbs/orb/circleci/path-filtering
 orbs:
   azure-cli: circleci/azure-cli@1.2.2
   node: circleci/node@5.1.0
+  path-filtering: circleci/path-filtering@0.1.4
 
 jobs:
   deploy_python_func_app:
@@ -96,5 +98,5 @@ workflows:
       #       paths:
       #         only: /^python_func_apps/.*
       - deploy_powershell_func_app:
-          filters:
-              paths: powershell_func_app/*
+          path-filtering/filter:
+              mapping: powershell_func_app/*
