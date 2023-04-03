@@ -31,19 +31,19 @@ jobs:
     executor: node/default
     environment:
       # # Azure Function App settings
-      FUNCTION_APP_NAME: <functionappname>
-      FUNCTION_APP_RESOURCE_GROUP: <resourcegroupname>
-      FUNCTION_APP_SLOT: <slotname> # Optional
-      FUNCTION_APP_PACKAGE_PATH: ./FunctionApp.zip
-      FUNCTION_APP_AUTH_PROVIDER: Microsoft
-      FUNCTION_APP_ALLOWED_AUDIENCES: <audience>
-      FUNCTION_APP_CLIENT_ID: <clientid>
-      FUNCTION_APP_CLIENT_SECRET: <clientsecret>
-      FUNCTION_APP_TENANT_ID: <tenantid>
+      # FUNCTION_APP_NAME: <functionappname>
+      # FUNCTION_APP_RESOURCE_GROUP: <resourcegroupname>
+      # FUNCTION_APP_SLOT: <slotname> # Optional
+      # FUNCTION_APP_PACKAGE_PATH: ./FunctionApp.zip
+      # FUNCTION_APP_AUTH_PROVIDER: Microsoft
+      # FUNCTION_APP_ALLOWED_AUDIENCES: <audience>
+      # FUNCTION_APP_CLIENT_ID: <clientid>
+      # FUNCTION_APP_CLIENT_SECRET: <clientsecret>
+      # FUNCTION_APP_TENANT_ID: <tenantid>
       # # Azure resource settings
-      RESOURCE_GROUP_LOCATION: <location>
-      RESOURCE_GROUP_NAME: <resourcegroupname>
-      STORAGE_ACCOUNT_NAME: <storageaccountname>
+      # RESOURCE_GROUP_LOCATION: <location>
+      # RESOURCE_GROUP_NAME: <resourcegroupname>
+      # STORAGE_ACCOUNT_NAME: <storageaccountname>
     steps:
       - checkout
       - run:
