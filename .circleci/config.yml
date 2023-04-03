@@ -54,7 +54,7 @@ jobs:
           name: Create the resource group
           command: |
             az login --service-principal --username $FUNCTION_APP_CLIENT_ID --password $FUNCTION_APP_CLIENT_SECRET --tenant $FUNCTION_APP_TENANT_ID
-            az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_GROUP_LOCATION
+            az group create --name $FUNCTION_APP_RESOURCE_GROUP --location $RESOURCE_GROUP_LOCATION
       - run:
           name: Create the storage account
           command: |
