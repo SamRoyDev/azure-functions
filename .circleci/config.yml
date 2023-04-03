@@ -1,0 +1,101 @@
+version: 2.1
+
+# https://circleci.com/developer/orbs/orb/circleci/azure-cli
+# https://circleci.com/developer/orbs/orb/circleci/node
+orbs:
+  azure-cli: circleci/azure-cli@1.2.2
+  node: circleci/node@5.1.0
+
+jobs:
+  deploy_python_func_app:
+    executor: node/default
+    steps:
+      - checkout
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - run:
+          name: Install Azure Functions Core Tools, Azure CLI, and Python
+          command: |
+            sudo npm i -g azure-functions-core-tools@3 --unsafe-perm true
+      - run:
+          name: Deploy Python Function App
+          command: |
+            az login --service-principal -u $AZURE_SP_USERNAME -p $AZURE_SP_PASSWORD --tenant $AZURE_TENANT_ID
+            cd python_func_apps
+            func azure functionapp publish $PYTHON_APP_NAME
+            cd ..
+
+  deploy_powershell_func_app:
+    executor: node/default
+    environment:
+      # # Azure Function App settings
+      FUNCTION_APP_NAME: <functionappname>
+      FUNCTION_APP_RESOURCE_GROUP: <resourcegroupname>
+      FUNCTION_APP_SLOT: <slotname> # Optional
+      FUNCTION_APP_PACKAGE_PATH: ./FunctionApp.zip
+      FUNCTION_APP_AUTH_PROVIDER: Microsoft
+      FUNCTION_APP_ALLOWED_AUDIENCES: <audience>
+      FUNCTION_APP_CLIENT_ID: <clientid>
+      FUNCTION_APP_CLIENT_SECRET: <clientsecret>
+      FUNCTION_APP_TENANT_ID: <tenantid>
+      # # Azure resource settings
+      RESOURCE_GROUP_LOCATION: <location>
+      RESOURCE_GROUP_NAME: <resourcegroupname>
+      STORAGE_ACCOUNT_NAME: <storageaccountname>
+    steps:
+      - checkout
+      - run:
+          name: Install Azure CLI
+          command: |
+            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - run:
+          name: Create the resource group
+          command: |
+            az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+            az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_GROUP_LOCATION
+      - run:
+          name: Create the storage account
+          command: |
+            az storage account create --name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP_NAME --location $RESOURCE_GROUP_LOCATION --sku Standard_LRS
+      - run:
+          name: Install PowerShell
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y powershell
+      - run:
+          name: Install Azure Functions Core Tools
+          command: |
+            npm install -g azure-functions-core-tools@3 --unsafe-perm true
+      - run:
+          name: Install zip
+          command: |
+            sudo apt-get install -y zip
+      - run:
+          name: Zip the function app
+          command: |
+            pwsh -Command "Compress-Archive -Path FunctionApp/* -DestinationPath FunctionApp.zip"
+      - run:
+          name: Set the application settings
+          command: |
+            az functionapp config appsettings set --name $FUNCTION_APP_NAME --resource-group $FUNCTION_APP_RESOURCE_GROUP --slot $FUNCTION_APP_SLOT --settings MySetting=$MY_SETTING
+      - run:
+          name: Deploy the function app
+          command: |
+            az functionapp deployment source config-zip --name $FUNCTION_APP_NAME --resource-group $FUNCTION_APP_RESOURCE_GROUP --slot $FUNCTION_APP_SLOT --src $FUNCTION_APP_PACKAGE_PATH
+      - run:
+          name: Configure authentication
+          command: |
+            az functionapp auth update --name $FUNCTION_APP_NAME --resource-group $FUNCTION_APP_RESOURCE_GROUP --enabled true --action LoginWithAzureActiveDirectory --aad-allowed-token-audiences $FUNCTION_APP_ALLOWED_AUDIENCES --aad-client-id $FUNCTION_APP_CLIENT_ID --aad-client-secret $FUNCTION_APP_CLIENT_SECRET --aad-tenant-id $FUNCTION_APP_TENANT_ID --provider $FUNCTION_APP_AUTH_PROVIDER
+
+workflows:
+  version: 2
+  deploy_function_apps:
+    jobs:
+      # - deploy_python_func_app:
+      #     filters:
+      #       paths:
+      #         only: /^python_func_apps/.*
+      - deploy_powershell_func_app:
+          filters:
+            paths:
+              only: /^powershell_func_apps/.*

@@ -26,7 +26,6 @@ local.settings.json
 node_modules
 dist
 
-.circleci/*
 *.fsproj
 packages*
 *.zip
