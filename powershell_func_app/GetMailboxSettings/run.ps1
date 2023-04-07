@@ -5,13 +5,6 @@ param($Request, $TriggerMetadata)
 # import helper functions
 . (Join-Path $PSScriptRoot "../helpers/CertificateAuthentication.ps1")
 
-# Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-#     StatusCode = [HttpStatusCode]::BadRequest
-#     Body = "testing"
-# })
-
-# return 1
-
 $email = $Request.Query.email
 
 if (-not $email) {
