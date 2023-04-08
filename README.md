@@ -13,6 +13,12 @@ Run the following command to deploy your function app:
 For local testing, use `func host start` with the Azure Functions Core Tools, and use the Serverless Framework for deployment to Azure.
 
 
+## Powershell Function Apps
+* AddMailboxCustomAttribute
+* ConvertToSharedMailboxPS
+* GetMailboxSettings
+
+
 ├── python_func_apps
 │   ├── project1
 │   │   ├── host.json
