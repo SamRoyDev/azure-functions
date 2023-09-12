@@ -23,7 +23,7 @@ function ConvertToSharedMailbox {
         Connect-ExchangeOnline -Certificate $Certificate -AppId $env:AZURE_APP_ID -Organization $env:AZURE_ORG
 
         # Convert user mailbox to shared mailbox
-        #Set-Mailbox -Identity $userId -Type Shared -ErrorAction Stop
+        Set-Mailbox -Identity $userId -Type Shared -ErrorAction Stop
         $result = Get-Mailbox -Identity $Identity
 
         # Disconnect from Exchange Online
